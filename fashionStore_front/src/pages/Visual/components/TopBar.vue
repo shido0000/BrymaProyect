@@ -1,215 +1,311 @@
 <template>
-  <div class="topbar-container ">
+  <div class="topbar-container">
     <header class="visual-topbar bg-white shadow-1">
-    <div class="header-grid">
-      <div class="left-col">
-        <q-btn
-          flat
-          round
-          dense
-          icon="menu"
-          class="mobile-menu-btn"
-          v-if="$q.screen.lt.md"
-          ref="mobileMenuBtn"
-        >
-          <!-- Mobile Menu -->
-          <q-menu
-            auto-close
-            anchor="bottom left"
-            self="top left"
-            class="mobile-menu"
-            transition-show="slide-right"
-            transition-hide="slide-left"
+      <div class="header-grid">
+        <div class="left-col">
+          <q-btn
+            flat
+            round
+            dense
+            icon="menu"
+            class="mobile-menu-btn"
+            v-if="$q.screen.lt.md"
+            ref="mobileMenuBtn"
           >
-            <q-list style="min-width: 280px">
-              <q-item-label header class="text-h6 q-mb-md">Menú</q-item-label>
+            <!-- Mobile Menu -->
+            <q-menu
+              auto-close
+              anchor="bottom left"
+              self="top left"
+              class="mobile-menu"
+              transition-show="slide-right"
+              transition-hide="slide-left"
+            >
+              <q-list style="min-width: 280px">
+                <q-item-label header class="text-h6 q-mb-md">Menú</q-item-label>
 
-              <!-- Inicio Button in Mobile Menu -->
-              <q-item clickable class="mobile-menu-item q-mb-sm" @click="router.push({ name: 'IndexPage' })">
-                <q-item-section avatar>
-                  <q-icon name="home" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Inicio</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <!-- Wishlist Button in Mobile Menu -->
-              <q-item clickable class="mobile-menu-item q-mb-sm" @click="goToWishlist">
-                <q-item-section avatar>
-                  <q-icon name="favorite_border" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Mi Lista de Deseos</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <!-- Cart Button in Mobile Menu -->
-              <q-item clickable class="mobile-menu-item q-mb-sm" @click="goToCart">
-                <q-item-section avatar>
-                  <q-icon name="shopping_cart" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Mi Carrito</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <!-- User Profile in Mobile Menu -->
-              <q-item clickable class="mobile-menu-item q-mb-md" @click="goLoginMobile">
-                <q-item-section avatar>
-                  <q-icon name="person" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Mi Perfil</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-separator class="q-my-md" />
-
-              <!-- Additional Navigation -->
-              <q-item-label header class="text-subtitle2 q-mb-sm">Categorías</q-item-label>
-              <q-item clickable @click="closeMobileMenu(() => router.push({ name: 'Categorias' }))">
-                <q-item-section>
-                  <q-item-label>Todas las Categorías</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <template v-if="normalizedCategories && normalizedCategories.length">
+                <!-- Inicio Button in Mobile Menu -->
                 <q-item
-                  v-for="(cat, index) in normalizedCategories.slice(0, 5)"
-                  :key="'mobile-cat-'+(cat.id ?? cat.nombre ?? index)"
                   clickable
-                  @click="closeMobileMenu(() => goToCategory(cat.id))"
+                  class="mobile-menu-item q-mb-sm"
+                  @click="router.push({ name: 'IndexPage' })"
                 >
+                  <q-item-section avatar>
+                    <q-icon name="home" />
+                  </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ cat.nombre }}</q-item-label>
+                    <q-item-label>Inicio</q-item-label>
                   </q-item-section>
                 </q-item>
-              </template>
 
-              <q-separator class="q-my-md" />
+                <!-- Wishlist Button in Mobile Menu -->
+                <q-item
+                  clickable
+                  class="mobile-menu-item q-mb-sm"
+                  @click="goToWishlist"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="favorite_border" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Mi Lista de Deseos</q-item-label>
+                  </q-item-section>
+                </q-item>
 
-              <!-- Quick Links -->
-              <q-item-label header class="text-subtitle2 q-mb-sm">Destacados</q-item-label>
-              <q-item clickable @click="closeMobileMenu(() => router.push({ name: 'Productos', query: { novedades: 1 } }))">
-                <q-item-section>
-                  <q-item-label>Novedades</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item clickable @click="closeMobileMenu(() => router.push({ name: 'Productos', query: { rebajas: 1 } }))">
-                <q-item-section>
-                  <q-item-label>Rebajas</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-        <a @click.prevent="goHome" style="cursor:pointer">
-          <img src="/img/Logotipo.png" alt="Logo" class="topbar-logo"/>
-        </a>
-      </div>
+                <!-- Cart Button in Mobile Menu -->
+                <q-item
+                  clickable
+                  class="mobile-menu-item q-mb-sm"
+                  @click="goToCart"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="shopping_cart" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Mi Carrito</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <!-- User Profile in Mobile Menu -->
+                <q-item
+                  clickable
+                  class="mobile-menu-item q-mb-md"
+                  @click="goLoginMobile"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="person" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Mi Perfil</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-separator class="q-my-md" />
+
+                <!-- Additional Navigation -->
+                <q-item-label header class="text-subtitle2 q-mb-sm"
+                  >Categorías</q-item-label
+                >
+                <q-item
+                  clickable
+                  @click="
+                    closeMobileMenu(() => router.push({ name: 'Categorias' }))
+                  "
+                >
+                  <q-item-section>
+                    <q-item-label>Todas las Categorías</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <template
+                  v-if="normalizedCategories && normalizedCategories.length"
+                >
+                  <q-item
+                    v-for="(cat, index) in normalizedCategories.slice(0, 5)"
+                    :key="'mobile-cat-' + (cat.id ?? cat.nombre ?? index)"
+                    clickable
+                    @click="closeMobileMenu(() => goToCategory(cat.id))"
+                  >
+                    <q-item-section>
+                      <q-item-label>{{ cat.nombre }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+
+                <q-separator class="q-my-md" />
+
+                <!-- Quick Links -->
+                <q-item-label header class="text-subtitle2 q-mb-sm"
+                  >Destacados</q-item-label
+                >
+                <q-item
+                  clickable
+                  @click="
+                    closeMobileMenu(() =>
+                      router.push({
+                        name: 'Productos',
+                        query: { novedades: 1 },
+                      })
+                    )
+                  "
+                >
+                  <q-item-section>
+                    <q-item-label>Novedades</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  @click="
+                    closeMobileMenu(() =>
+                      router.push({ name: 'Productos', query: { rebajas: 1 } })
+                    )
+                  "
+                >
+                  <q-item-section>
+                    <q-item-label>Rebajas</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <a @click.prevent="goHome" style="cursor: pointer">
+            <img src="/img/Logotipo.png" alt="Logo" class="topbar-logo" />
+          </a>
+        </div>
 
         <div class="search-pill">
-            <q-input v-model="q" dense placeholder="Buscar..." borderless   @keyup.enter="search">
-              <template #append>
-                <q-btn flat round icon="search" color="primary"   @click="search" />
-              </template>
-            </q-input>
+          <q-input
+            v-model="q"
+            dense
+            placeholder="Buscar..."
+            borderless
+            @keyup.enter="search"
+          >
+            <template #append>
+              <q-btn flat round icon="search" color="primary" @click="search" />
+            </template>
+          </q-input>
         </div>
 
-      <div class="right-col desktop-actions">
-        <WishlistButton />
-        <CartButton />
-        <q-btn flat round dense color="primary" icon="person" @click="goLogin" />
+        <div class="right-col desktop-actions">
+          <WishlistButton />
+          <CartButton />
+          <q-btn
+            flat
+            round
+            dense
+            color="primary"
+            icon="person"
+            @click="goLogin"
+          />
+        </div>
       </div>
-    </div>
 
-    <!-- secondary nav (left-aligned) -->
-    <div class="topbar-nav ">
-      <div class="row items-center ">
-        <div class="col row items-center nav-items-container q-pb-xs">
-          <q-btn-dropdown style="border: 1px solid #C7B5FF; border-radius: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.45);" color="transparent" text-color="black" flat class="category-btn" :dense="true">
-            <template #label>
-              <div class="cat-label"><span class="cat-label-text q-pl-sm">Categorías</span></div>
-            </template>
-            <q-list>
-              <q-item clickable v-close-popup @click="() => router.push({ name: 'Categorias' })">
-                <q-item-section>
-                  <q-item-label>Todos</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <template v-if="normalizedCategories && normalizedCategories.length">
-                <q-item
-                  v-for="(cat, index) in normalizedCategories"
-                  :key="'nav-'+(cat.id ?? cat.nombre ?? index)"
-                  clickable
-                  @click="() => goToCategory(cat.id)"
-                >
-                  <q-item-section>{{ cat.nombre }}</q-item-section>
-                </q-item>
+      <!-- secondary nav (left-aligned) -->
+      <div class="topbar-nav">
+        <div class="row items-center">
+          <div class="col row items-center nav-items-container q-pb-xs">
+            <q-btn-dropdown
+              style="
+                border: 1px solid #c7b5ff;
+                border-radius: 15px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+              "
+              color="transparent"
+              text-color="black"
+              flat
+              class="category-btn"
+              :dense="true"
+            >
+              <template #label>
+                <div class="cat-label">
+                  <span class="cat-label-text q-pl-sm">Categorías</span>
+                </div>
               </template>
-              <template v-else>
-                <q-item disabled>
+              <q-list>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="() => router.push({ name: 'Categorias' })"
+                >
                   <q-item-section>
-                    <q-item-label>No hay categorías</q-item-label>
+                    <q-item-label>Todos</q-item-label>
                   </q-item-section>
                 </q-item>
-              </template>
-            </q-list>
-          </q-btn-dropdown>
 
-          <q-btn   flat style="border: 1px solid #C7B5FF; border-radius: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.45);" label="Novedades" class="nav-btn " @click="() => router.push({ name: 'Productos', query: { novedades: 1 } })" />
-          <q-btn   flat style="border: 1px solid #C7B5FF; border-radius: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.45);" label="Ofertas" class="nav-btn" @click="() => router.push({ name: 'Productos', query: { rebajas: 1 } })" />
+                <template
+                  v-if="normalizedCategories && normalizedCategories.length"
+                >
+                  <q-item
+                    v-for="(cat, index) in normalizedCategories"
+                    :key="'nav-' + (cat.id ?? cat.nombre ?? index)"
+                    clickable
+                    @click="() => goToCategory(cat.id)"
+                  >
+                    <q-item-section>{{ cat.nombre }}</q-item-section>
+                  </q-item>
+                </template>
+                <template v-else>
+                  <q-item disabled>
+                    <q-item-section>
+                      <q-item-label>No hay categorías</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-list>
+            </q-btn-dropdown>
+
+            <q-btn
+              flat
+              style="
+                border: 1px solid #c7b5ff;
+                border-radius: 15px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+              "
+              label="Novedades"
+              class="nav-btn"
+              @click="
+                () =>
+                  router.push({ name: 'Productos', query: { novedades: 1 } })
+              "
+            />
+            <q-btn
+              flat
+              style="
+                border: 1px solid #c7b5ff;
+                border-radius: 15px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+              "
+              label="Ofertas"
+              class="nav-btn"
+              @click="
+                () => router.push({ name: 'Productos', query: { rebajas: 1 } })
+              "
+            />
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
-import WishlistButton from 'src/components/WishlistButton.vue'
-import CartButton from 'src/components/CartButton.vue'
-import { loadGetDatosInicio } from 'src/assets/js/util/funciones'
-import { getToken, isTokenValid } from 'src/assets/js/util/authHelper'
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import WishlistButton from "src/components/WishlistButton.vue";
+import CartButton from "src/components/CartButton.vue";
+import { loadGetDatosInicio } from "src/assets/js/util/funciones";
 
-const $q = useQuasar()
+const $q = useQuasar();
 
-const q = ref('')
-const selectedCatId = ref(null)
-const router = useRouter()
-const emit = defineEmits(['update:searchCategory', 'update:leftDrawer'])
+const q = ref("");
+const selectedCatId = ref(null);
+const router = useRouter();
+const emit = defineEmits(["update:searchCategory", "update:leftDrawer"]);
 
-
-
-const categories = ref([])
+const categories = ref([]);
 
 onMounted(async () => {
   try {
-    const inicio  = await loadGetDatosInicio('ObtenerDatosInicio')
+    const inicio = await loadGetDatosInicio("ObtenerDatosInicio");
     categories.value =
       inicio?.categoriasProductos ??
       inicio?.categorias ??
       inicio?.data?.categorias ??
       inicio?.result?.categoriasProductos ??
-      []
+      [];
   } catch (e) {
-    console.warn('Error cargando categorías', e)
-    categories.value = []
+    console.warn("Error cargando categorías", e);
+    categories.value = [];
   }
-})
-
-
+});
 
 const normalizedCategories = computed(() => {
-  const arr = categories.value || []
+  const arr = categories.value || [];
   return arr.map((c, idx) => {
-    if (!c) return { id: null, nombre: String(c) }
-    if (typeof c !== 'object') return { id: c, nombre: String(c) }
-    const id = c.id ?? c.categoriaId ?? c._id ?? c.codigo ?? c.value ?? null
+    if (!c) return { id: null, nombre: String(c) };
+    if (typeof c !== "object") return { id: c, nombre: String(c) };
+    const id = c.id ?? c.categoriaId ?? c._id ?? c.codigo ?? c.value ?? null;
     const nombre =
       c.nombre ??
       c.Nombre ??
@@ -217,101 +313,80 @@ const normalizedCategories = computed(() => {
       c.descripcion ??
       c.nombreCategoria ??
       c.name ??
-      String(id ?? '')
-    return { ...c, id, nombre }
-  })
-})
+      String(id ?? "");
+    return { ...c, id, nombre };
+  });
+});
 
 function goHome() {
-  router.push({ name: 'IndexPage' }).catch(() => router.push('/'))
+  router.push({ name: "IndexPage" }).catch(() => router.push("/"));
 }
-
-// ✅ Función auxiliar para limpiar todos los tokens
-const clearAllTokens = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('token_exp')
-  sessionStorage.removeItem('token')
-  sessionStorage.removeItem('token_exp')
-}
-
 function goLogin() {
-  // Verificar si el usuario está logueado con token válido
-  const token = getToken()
-  
-  if (token) {
-    // Hay token, verificar si es válido (no expirado)
-    const tokenValid = isTokenValid()
-    
-    if (tokenValid) {
-      // Usuario logueado con token válido, ir al perfil
-      router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
-    } else {
-      // Token expirado, limpiar y permanecer en la página actual o ir a login
-      clearAllTokens()
-      router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
-    }
+  // Verificar si el usuario está logueado
+  const token = getToken();
+  //const remember=localStorage.getItem("remember")
+  // Verificar si la sesión fue "recordada" (token en localStorage Y bandera true)
+  const isRemembered = localStorage.getItem("remember") === "true";
+
+  if (token && isRemembered) {
+    // Usuario logueado, ir al perfil
+    router.push({ name: "Perfil" }).catch(() => router.push("/perfil"));
   } else {
-    // No hay token, ir a login
-    router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
+    // Usuario no logueado, ir al login
+    router.push({ name: "LoginPage" }).catch(() => router.push("/login"));
   }
 }
 function goToCategory(id) {
-  if (!id) return
-  router.push({ name: 'CategoriaProductos', params: { id } }).catch(() =>
-    router.push('/categoria/' + id)
-  )
+  if (!id) return;
+  router
+    .push({ name: "CategoriaProductos", params: { id } })
+    .catch(() => router.push("/categoria/" + id));
 }
 function selectSearchCategory(cat) {
-  selectedCatId.value = cat ? cat.id ?? cat : null
+  selectedCatId.value = cat ? cat.id ?? cat : null;
   try {
-    emit('update:searchCategory', selectedCatId.value)
+    emit("update:searchCategory", selectedCatId.value);
   } catch (e) {}
 }
 function search() {
-  const params = {}
-  if (q.value) params.q = q.value
-  if (selectedCatId.value) params.cat = selectedCatId.value
+  const params = {};
+  if (q.value) params.q = q.value;
+  if (selectedCatId.value) params.cat = selectedCatId.value;
   try {
-    emit('update:searchCategory', selectedCatId.value)
+    emit("update:searchCategory", selectedCatId.value);
   } catch (e) {}
-  router.push({ name: 'Productos', query: params }).catch(() =>
-    router.push('/productos')
-  )
+  router
+    .push({ name: "Productos", query: params })
+    .catch(() => router.push("/productos"));
 }
 
 function goToCart() {
-  router.push({ name: 'Carrito' }).catch(() => router.push('/carrito'))
+  router.push({ name: "Carrito" }).catch(() => router.push("/carrito"));
 }
 
 function goToWishlist() {
-  router.push({ name: 'ListaDeseos' }).catch(() => router.push('/lista-deseos'))
+  router
+    .push({ name: "ListaDeseos" })
+    .catch(() => router.push("/lista-deseos"));
 }
 
+// ✅ Función auxiliar para obtener el token desde cualquier almacenamiento
+const getToken = () => {
+  return localStorage.getItem("token") || sessionStorage.getItem("token");
+};
 function goLoginMobile() {
-  // Verificar si el usuario está logueado con token válido
-  const token = getToken()
-  
-  if (token) {
-    // Hay token, verificar si es válido (no expirado)
-    const tokenValid = isTokenValid()
-    
-    if (tokenValid) {
-      // Usuario logueado con token válido, ir al perfil
-      router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
-    } else {
-      // Token expirado, limpiar y ir a login
-      clearAllTokens()
-      router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
-    }
+  const token = getToken();
+  const remember = localStorage.getItem("remember");
+  if (token && (remember === true || remember === "true")) {
+    router.push({ name: "Perfil" }).catch(() => router.push("/perfil"));
   } else {
-    // No hay token, ir a login
-    router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
+    router.push({ name: "LoginPage" }).catch(() => router.push("/login"));
   }
 }
 
 function closeMobileMenu(callback) {
   if (callback) {
-    setTimeout(() => callback(), 100)
+    setTimeout(() => callback(), 100);
   }
 }
 </script>
@@ -336,7 +411,7 @@ function closeMobileMenu(callback) {
 .header-grid {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-areas: 'left center right';
+  grid-template-areas: "left center right";
   align-items: center;
   gap: 12px;
 }
@@ -366,9 +441,9 @@ function closeMobileMenu(callback) {
   border-radius: 999px;
   padding: 6px 10px;
   height: 48px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
-  border: 1px solid #C7B5FF;
+  border: 1px solid #c7b5ff;
 }
 
 .category-btn {
@@ -398,7 +473,7 @@ function closeMobileMenu(callback) {
 .divider {
   width: 1px;
   height: 28px;
-  background: rgba(0,0,0,0.06);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .search-input-wrap {
@@ -437,7 +512,7 @@ function closeMobileMenu(callback) {
 
 .nav-btn {
   white-space: nowrap;
-  margin: 0 4px ;
+  margin: 0 4px;
 }
 
 .desktop-actions {

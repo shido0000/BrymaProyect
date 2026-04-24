@@ -2,7 +2,10 @@
   <div class="login-bg">
     <div class="login-card">
       <div @click="goToHome" class="logo-container q-mb-md">
-        <q-img src="/img/Logo.png" style="width: 120px; height: 120px; object-fit: contain;" />
+        <q-img
+          src="/img/Logo.png"
+          style="width: 120px; height: 120px; object-fit: contain"
+        />
         <q-tooltip>Volver a la tienda</q-tooltip>
       </div>
 
@@ -106,229 +109,233 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
-import { loadGet, saveDataPronosticoEnviarObjeto } from 'src/assets/js/util/funciones'
-import { Error } from 'src/assets/js/util/notify'
-import DialogLoad from 'src/components/DialogBoxes/DialogLoad.vue'
-import { api } from 'src/boot/axios'
+import {
+  loadGet,
+  saveDataPronosticoEnviarObjeto,
+} from "src/assets/js/util/funciones";
+import { Error } from "src/assets/js/util/notify";
+import DialogLoad from "src/components/DialogBoxes/DialogLoad.vue";
+import { api } from "src/boot/axios";
 
 // refs reactivas
-const username = ref('')
-const password = ref('')
-const remember = ref(false)
-const dialogLoad = ref(false)
+const username = ref("");
+const password = ref("");
+const remember = ref(false);
+const dialogLoad = ref(false);
 
-const forgotEmail = ref('')
-const nuevaContrasenna = ref('')
-const confirmarContrasenna = ref('')
-const correoValido = ref(false)
+const forgotEmail = ref("");
+const nuevaContrasenna = ref("");
+const confirmarContrasenna = ref("");
+const correoValido = ref(false);
 
-const showForgotDialog = ref(false)
+const showForgotDialog = ref(false);
 
-const router = useRouter()
-const $q = useQuasar()
+const router = useRouter();
+const $q = useQuasar();
 
-// ✅ Función para verificar si el token es válido y redirigir si es necesario
-// Esta función se usa solo cuando el usuario navega directamente a /login
+// ✅ Función para verificar si el token es válido
 const verificarTokenExistente = () => {
   // Buscar token en localStorage o sessionStorage
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+  const exp =
+    localStorage.getItem("token_exp") || sessionStorage.getItem("token_exp");
 
-  if (token) {
-    try {
-      // Decodificar el token para verificar expiración
-      const parts = token.split('.')
-      if (parts.length === 3) {
-        const payload = JSON.parse(atob(parts[1]))
-        const expirationTime = payload.exp * 1000 // exp está en segundos
-        
-        if (Date.now() < expirationTime) {
-          // Token válido, redirigir al perfil usando replace para evitar historial
-          setTimeout(() => {
-            router.replace({ name: 'Perfil' })
-          }, 0)
-          return true
-        } else {
-          // Token expirado, limpiar ambos almacenamientos
-          localStorage.removeItem('token')
-          localStorage.removeItem('token_exp')
-          sessionStorage.removeItem('token')
-          sessionStorage.removeItem('token_exp')
-          $q.notify({
-            type: 'warning',
-            message: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
-          })
-        }
-      }
-    } catch (e) {
-      console.error('Error decodificando token:', e)
-      // Token inválido, limpiar
-      localStorage.removeItem('token')
-      localStorage.removeItem('token_exp')
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('token_exp')
+  const isRemembered = localStorage.getItem("remember") === "true";
+
+  if (token && exp && isRemembered) {
+    const expirationDate = new Date(exp);
+    const ahora = new Date();
+
+    if (expirationDate > ahora) {
+      // Token válido, redirigir al perfil
+      router.push("/Perfil");
+      return true;
+    } else {
+      // Token expirado, limpiar ambos almacenamientos
+      localStorage.removeItem("token");
+      localStorage.removeItem("token_exp");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("token_exp");
+      $q.notify({
+        type: "warning",
+        message: "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+      });
     }
   }
-  return false
-}
+  return false;
+};
 
 // ✅ Verificar sesión al cargar el componente
-// NOTA: El router guard ya maneja la redirección de usuarios autenticados
-// por lo que NO necesitamos verificar el token aquí para evitar bucles
-// onMounted(() => {
-//   verificarTokenExistente()
-// })
+onMounted(() => {
+  verificarTokenExistente();
+});
 
 // Métodos
 const onLogin = async () => {
-  await login()
-}
+  await login();
+};
 
 const onRegister = () => {
-  router.push('/register')
-}
+  router.push("/register");
+};
 
 // Función de login real
 const login = async () => {
-  const url = 'Autenticacion/Login'
+  const url = "Autenticacion/Login";
   const payload = {
     username: username.value,
-    contrasenna: password.value
-  }
+    contrasenna: password.value,
+  };
 
   await saveDataPronosticoEnviarObjeto(url, payload, dialogLoad).then(
     async (respuesta) => {
       if (!!respuesta?.mensajeError) {
-        Error(respuesta?.mensajeError)
+        Error(respuesta?.mensajeError);
       } else {
-        let token = respuesta?.resultado?.result?.token
-        let exp = respuesta?.resultado?.result?.fechaExpiracion
+        let token = respuesta?.resultado?.result?.token;
+        let exp = respuesta?.resultado?.result?.fechaExpiracion;
 
         if (token) {
+          localStorage.setItem("remember", remember.value);
           // ✅ Guardar según el estado de "Recuérdame"
           if (remember.value) {
             // Guardar en localStorage (persistente entre sesiones del navegador)
-            localStorage.setItem('token', token)
-            localStorage.setItem('token_exp', exp)
+            localStorage.setItem("token", token);
+            localStorage.setItem("token_exp", exp);
           } else {
             // Guardar en sessionStorage (solo para la pestaña actual)
-            sessionStorage.setItem('token', token)
-            sessionStorage.setItem('token_exp', exp)
+            sessionStorage.setItem("token", token);
+            sessionStorage.setItem("token_exp", exp);
           }
         }
 
-        $q.notify({ type: 'positive', message: 'Login exitoso' })
-        router.push({ name: 'Perfil' })
+        $q.notify({ type: "positive", message: "Login exitoso" });
+        router.push("/Perfil");
       }
     }
-  )
-}
+  );
+};
 
 const loginDesdeRecuperacion = async (usuario, contrasenha) => {
-  const url = 'Autenticacion/Login'
+  const url = "Autenticacion/Login";
   const payload = {
     username: usuario,
-    contrasenna: contrasenha
-  }
+    contrasenna: contrasenha,
+  };
 
   await saveDataPronosticoEnviarObjeto(url, payload, dialogLoad).then(
     async (respuesta) => {
       if (!!respuesta?.mensajeError) {
-        Error(respuesta?.mensajeError)
+        Error(respuesta?.mensajeError);
       } else {
-        let token = respuesta?.resultado?.result?.token
-        let exp = respuesta?.resultado?.result?.fechaExpiracion
+        let token = respuesta?.resultado?.result?.token;
+        let exp = respuesta?.resultado?.result?.fechaExpiracion;
 
         if (token) {
           // ✅ Aplicar la misma preferencia de "Recuérdame"
           if (remember.value) {
-            localStorage.setItem('token', token)
-            localStorage.setItem('token_exp', exp)
+            localStorage.setItem("token", token);
+            localStorage.setItem("token_exp", exp);
           } else {
-            sessionStorage.setItem('token', token)
-            sessionStorage.setItem('token_exp', exp)
+            sessionStorage.setItem("token", token);
+            sessionStorage.setItem("token_exp", exp);
           }
         }
 
-        $q.notify({ type: 'positive', message: 'Login exitoso' })
-        router.push({ name: 'Perfil' })
+        $q.notify({ type: "positive", message: "Login exitoso" });
+        router.push("/Perfil");
       }
     }
-  )
-}
+  );
+};
 
 function goToHome() {
-  router.push('/')
+  router.push("/");
 }
 
 const verificarCorreo = async () => {
   if (!forgotEmail.value) {
-    $q.notify({ type: 'negative', message: 'Introduce tu correo' })
-    return
+    $q.notify({ type: "negative", message: "Introduce tu correo" });
+    return;
   }
-  const url = 'Autenticacion/VerificarCorreo'
-  const payload = { correo: forgotEmail.value }
+  const url = "Autenticacion/VerificarCorreo";
+  const payload = { correo: forgotEmail.value };
   try {
-    const response = await saveDataPronosticoEnviarObjeto(url, payload, dialogLoad)
+    const response = await saveDataPronosticoEnviarObjeto(
+      url,
+      payload,
+      dialogLoad
+    );
     if (response.resultado.existe) {
-      correoValido.value = true
-      $q.notify({ type: 'positive', message: 'Correo válido, ingresa tu nueva contraseña' })
+      correoValido.value = true;
+      $q.notify({
+        type: "positive",
+        message: "Correo válido, ingresa tu nueva contraseña",
+      });
     }
   } catch (err) {
-    $q.notify({ type: 'negative', message: 'Correo no encontrado' })
+    $q.notify({ type: "negative", message: "Correo no encontrado" });
   }
-}
+};
 
 const cambiarContrasenna = async () => {
   if (!nuevaContrasenna.value || !confirmarContrasenna.value) {
-    $q.notify({ type: 'negative', message: 'Completa ambos campos' })
-    return
+    $q.notify({ type: "negative", message: "Completa ambos campos" });
+    return;
   }
   if (nuevaContrasenna.value !== confirmarContrasenna.value) {
-    $q.notify({ type: 'negative', message: 'Las contraseñas no coinciden' })
-    return
+    $q.notify({ type: "negative", message: "Las contraseñas no coinciden" });
+    return;
   }
-  const url = 'Usuario/CambiarContrasennaDesdeRecuperar'
+  const url = "Usuario/CambiarContrasennaDesdeRecuperar";
   const payload = {
     correo: forgotEmail.value,
     nuevaContrasenna: nuevaContrasenna.value,
-    contrasennaConfirmada: confirmarContrasenna.value
-  }
+    contrasennaConfirmada: confirmarContrasenna.value,
+  };
   try {
-    const result = await saveDataPronosticoEnviarObjeto(url, payload, dialogLoad)
-    await loginDesdeRecuperacion(result.resultado.result.usu, result.resultado.result.cont)
-    $q.notify({ type: 'positive', message: 'Contraseña cambiada correctamente ✅' })
-    showForgotDialog.value = false
+    const result = await saveDataPronosticoEnviarObjeto(
+      url,
+      payload,
+      dialogLoad
+    );
+    await loginDesdeRecuperacion(
+      result.resultado.result.usu,
+      result.resultado.result.cont
+    );
+    $q.notify({
+      type: "positive",
+      message: "Contraseña cambiada correctamente ✅",
+    });
+    showForgotDialog.value = false;
   } catch (err) {
-    $q.notify({ type: 'negative', message: 'Error al cambiar la contraseña' })
+    $q.notify({ type: "negative", message: "Error al cambiar la contraseña" });
   }
-}
+};
 
 function abrirDialogoRecuperarContrasenha() {
-  showForgotDialog.value = true
-  forgotEmail.value = ''
-  nuevaContrasenna.value = ''
-  confirmarContrasenna.value = ''
-  correoValido.value = false
+  showForgotDialog.value = true;
+  forgotEmail.value = "";
+  nuevaContrasenna.value = "";
+  confirmarContrasenna.value = "";
+  correoValido.value = false;
 }
 </script>
 
 <style scoped lang="scss">
-@import '../css/quasar.variables.scss';
+@import "../css/quasar.variables.scss";
 
 .login-bg {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(
-    circle at 50% 30%,
-    $bry-white 0%,
-    $primary 100%
-  );
+  background: radial-gradient(circle at 50% 30%, $bry-white 0%, $primary 100%);
   padding: 20px;
 }
 

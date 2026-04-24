@@ -70,19 +70,20 @@
           <div class="col-12 text-caption text-grey-7 q-mb-xs" v-if="!producto.sinVariantes">Variantes:</div>
           <div class="col-12 row q-gutter-sm">
             <template v-for="(v, idx) in producto.variants" :key="v.id || idx">
-  <q-btn
-    v-if="v.talla && v.talla !== ''"
-    dense
-    outline
-    :color="selectedVariantIndex === idx ? 'primary' : 'grey-6'"
-    @click="selectVariant(idx)"
-    class="q-mr-sm q-mb-sm"
-  >
-    <div style="display:flex;align-items:center;gap:8px">
-      <span>{{ v.talla || '—' }}</span>
-    </div>
-  </q-btn>
-</template>
+                <q-btn
+                    v-if="v.talla && v.talla !== ''"
+                    dense
+                    outline
+                    :color="selectedVariantIndex === idx ? 'primary' : 'grey-6'"
+                    @click="selectVariant(idx)"
+                    class="q-mr-sm q-mb-sm"
+                     style="min-width: 70px"
+                >
+                    <div style="display:flex;align-items:center;gap:8px">
+                    <span>{{ v.talla || '—' }}</span>
+                    </div>
+                </q-btn>
+            </template>
           </div>
         </div>
         <div class="product-price q-mt-md">

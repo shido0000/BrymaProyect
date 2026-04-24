@@ -44,7 +44,7 @@ const sistemStatus = reactive({
 
 // Configurar el interceptor de Axios
 api.interceptors.request.use((config) => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("token") || localStorage.getItem("token");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`; // <-- Token en todas las solicitudes
     }

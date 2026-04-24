@@ -42,17 +42,8 @@ export default route(function (/* { store, ssrContext } */) {
         const userRole = getUserRole()
         const routeName = to.name
 
-        // 1️⃣ Si es ruta pública (incluyendo LoginPage y AccessDenied), permitir acceso sin validación de roles
+        // 1️⃣ Si es ruta pública, permitir acceso sin validación
         if (isPublic) {
-            // Si el usuario está autenticado y va a LoginPage, redirigirlo a Perfil
-            if (to.name === 'LoginPage') {
-                if (isAuthenticated) {
-                    return next({ name: 'Perfil', replace: true })
-                }
-                // Token inválido o no hay token, permitir acceso a login
-                return next()
-            }
-            // Para otras rutas públicas (AccessDenied, 404, etc.), permitir acceso
             return next()
         }
 
@@ -78,11 +69,16 @@ export default route(function (/* { store, ssrContext } */) {
             return next()
         }
 
-        // 4️⃣ Fallback: Si no está autenticado y no es ruta pública, redirigir a login
-        return next({
-            name: 'LoginPage',
-            query: { redirect: to.fullPath }
-        })
+        // 4️⃣ Si no está autenticado y no es ruta pública, redirigir a login
+        if (!isAuthenticated && !isPublic) {
+            return next({
+                name: 'LoginPage',
+                query: { redirect: to.fullPath }
+            })
+        }
+
+        // 5️⃣ Permitir acceso en otros casos
+        return next()
     })
 
     /**

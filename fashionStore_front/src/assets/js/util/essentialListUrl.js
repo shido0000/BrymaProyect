@@ -36,7 +36,7 @@ const allMenuItems = [
  * Determina qué items de menú ve cada rol
  */
 const menuByRole = {
-    Administrador: ['INICIO', 'DASHBOARD', 'PERFIL', 'PEDIDOS', 'NOMENCLADORES', 'CREAR INFORMACIÓN'],
+    Admin: ['INICIO', 'DASHBOARD', 'PERFIL', 'PEDIDOS', 'NOMENCLADORES', 'CREAR INFORMACIÓN'],
     Vendedor: ['INICIO', 'PERFIL', 'PEDIDOS'],
     Cliente: ['INICIO', 'PERFIL', 'PEDIDOS']
 };
@@ -119,9 +119,9 @@ export function canAccessRoute(routeName, userRole) {
     // Si no hay rol, denegar acceso
     if (!userRole) return false;
 
-    // Si el rol no tiene restricciones definidas, solo Administrador puede acceder
+    // Si el rol no tiene restricciones definidas, solo Admin puede acceder
     if (!routePermissions[routeName]) {
-        return userRole === 'Administrador';
+        return userRole === 'Admin';
     }
 
     // Verificar si el rol está en la lista de permisos
