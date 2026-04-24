@@ -42,8 +42,17 @@ export default route(function (/* { store, ssrContext } */) {
         const userRole = getUserRole()
         const routeName = to.name
 
-        // 1️⃣ Si es ruta pública, permitir acceso sin validación
+        // 1️⃣ Si es ruta pública (incluyendo LoginPage), permitir acceso sin validación de roles
+        // Pero si el usuario está autenticado y va a LoginPage, redirigirlo a Perfil
         if (isPublic) {
+            // Evitar bucle: si ya estamos en LoginPage, no hacer nada
+            if (to.name === 'LoginPage') {
+                if (isAuthenticated) {
+                    // Usuario ya logueado intenta ir a login, redirigir a perfil
+                    return next({ name: 'Perfil', replace: true })
+                }
+                return next()
+            }
             return next()
         }
 

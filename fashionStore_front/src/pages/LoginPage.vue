@@ -131,7 +131,8 @@ const showForgotDialog = ref(false)
 const router = useRouter()
 const $q = useQuasar()
 
-// ✅ Función para verificar si el token es válido
+// ✅ Función para verificar si el token es válido y redirigir si es necesario
+// Esta función se usa solo cuando el usuario navega directamente a /login
 const verificarTokenExistente = () => {
   // Buscar token en localStorage o sessionStorage
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
@@ -142,8 +143,11 @@ const verificarTokenExistente = () => {
     const ahora = new Date()
 
     if (expirationDate > ahora) {
-      // Token válido, redirigir al perfil
-      router.push('/Perfil')
+      // Token válido, redirigir al perfil usando replace para evitar historial
+      // Importante: usar nextTick para asegurar que el componente esté montado
+      setTimeout(() => {
+        router.replace({ name: 'Perfil' })
+      }, 0)
       return true
     } else {
       // Token expirado, limpiar ambos almacenamientos
@@ -161,9 +165,11 @@ const verificarTokenExistente = () => {
 }
 
 // ✅ Verificar sesión al cargar el componente
-onMounted(() => {
-  verificarTokenExistente()
-})
+// NOTA: El router guard ya maneja la redirección de usuarios autenticados
+// por lo que NO necesitamos verificar el token aquí para evitar bucles
+// onMounted(() => {
+//   verificarTokenExistente()
+// })
 
 // Métodos
 const onLogin = async () => {
@@ -204,7 +210,7 @@ const login = async () => {
         }
 
         $q.notify({ type: 'positive', message: 'Login exitoso' })
-        router.push('/Perfil')
+        router.push({ name: 'Perfil' })
       }
     }
   )
@@ -237,7 +243,7 @@ const loginDesdeRecuperacion = async (usuario, contrasenha) => {
         }
 
         $q.notify({ type: 'positive', message: 'Login exitoso' })
-        router.push('/Perfil')
+        router.push({ name: 'Perfil' })
       }
     }
   )
