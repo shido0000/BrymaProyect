@@ -136,29 +136,40 @@ const $q = useQuasar()
 const verificarTokenExistente = () => {
   // Buscar token en localStorage o sessionStorage
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const exp = localStorage.getItem('token_exp') || sessionStorage.getItem('token_exp')
 
-  if (token && exp) {
-    const expirationDate = new Date(exp)
-    const ahora = new Date()
-
-    if (expirationDate > ahora) {
-      // Token válido, redirigir al perfil usando replace para evitar historial
-      // Importante: usar nextTick para asegurar que el componente esté montado
-      setTimeout(() => {
-        router.replace({ name: 'Perfil' })
-      }, 0)
-      return true
-    } else {
-      // Token expirado, limpiar ambos almacenamientos
+  if (token) {
+    try {
+      // Decodificar el token para verificar expiración
+      const parts = token.split('.')
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]))
+        const expirationTime = payload.exp * 1000 // exp está en segundos
+        
+        if (Date.now() < expirationTime) {
+          // Token válido, redirigir al perfil usando replace para evitar historial
+          setTimeout(() => {
+            router.replace({ name: 'Perfil' })
+          }, 0)
+          return true
+        } else {
+          // Token expirado, limpiar ambos almacenamientos
+          localStorage.removeItem('token')
+          localStorage.removeItem('token_exp')
+          sessionStorage.removeItem('token')
+          sessionStorage.removeItem('token_exp')
+          $q.notify({
+            type: 'warning',
+            message: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
+          })
+        }
+      }
+    } catch (e) {
+      console.error('Error decodificando token:', e)
+      // Token inválido, limpiar
       localStorage.removeItem('token')
       localStorage.removeItem('token_exp')
       sessionStorage.removeItem('token')
       sessionStorage.removeItem('token_exp')
-      $q.notify({
-        type: 'warning',
-        message: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
-      })
     }
   }
   return false

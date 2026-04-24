@@ -226,17 +226,22 @@ function goHome() {
 }
 function goLogin() {
   // Verificar si el usuario está logueado con token válido
-  const tokenValid = isTokenValid()
-
-  if (tokenValid) {
-    // Usuario logueado, ir al perfil
-    router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
+  const token = getToken()
+  
+  if (token) {
+    // Hay token, verificar si es válido (no expirado)
+    const tokenValid = isTokenValid()
+    
+    if (tokenValid) {
+      // Usuario logueado con token válido, ir al perfil
+      router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
+    } else {
+      // Token expirado, limpiar y permanecer en la página actual o ir a login
+      clearAllTokens()
+      router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
+    }
   } else {
-    // Token inválido o expirado, limpiar y ir a login
-    localStorage.removeItem('token')
-    localStorage.removeItem('token_exp')
-    sessionStorage.removeItem('token')
-    sessionStorage.removeItem('token_exp')
+    // No hay token, ir a login
     router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
   }
 }
@@ -295,16 +300,31 @@ const isTokenValid = () => {
   }
 }
 
+// ✅ Función auxiliar para limpiar todos los tokens
+const clearAllTokens = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('token_exp')
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('token_exp')
+}
+
 function goLoginMobile() {
-  const tokenValid = isTokenValid()
-  if (tokenValid) {
-    router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
+  const token = getToken()
+  
+  if (token) {
+    // Hay token, verificar si es válido
+    const tokenValid = isTokenValid()
+    
+    if (tokenValid) {
+      // Usuario logueado con token válido, ir al perfil
+      router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
+    } else {
+      // Token expirado, limpiar y ir a login
+      clearAllTokens()
+      router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
+    }
   } else {
-    // Token inválido o expirado, limpiar y ir a login
-    localStorage.removeItem('token')
-    localStorage.removeItem('token_exp')
-    sessionStorage.removeItem('token')
-    sessionStorage.removeItem('token_exp')
+    // No hay token, ir a login
     router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
   }
 }
