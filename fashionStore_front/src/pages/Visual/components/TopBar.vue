@@ -174,6 +174,7 @@ import { useQuasar } from 'quasar'
 import WishlistButton from 'src/components/WishlistButton.vue'
 import CartButton from 'src/components/CartButton.vue'
 import { loadGetDatosInicio } from 'src/assets/js/util/funciones'
+import { getToken, isTokenValid } from 'src/assets/js/util/authHelper'
 
 const $q = useQuasar()
 
@@ -224,6 +225,15 @@ const normalizedCategories = computed(() => {
 function goHome() {
   router.push({ name: 'IndexPage' }).catch(() => router.push('/'))
 }
+
+// ✅ Función auxiliar para limpiar todos los tokens
+const clearAllTokens = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('token_exp')
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('token_exp')
+}
+
 function goLogin() {
   // Verificar si el usuario está logueado con token válido
   const token = getToken()
@@ -277,42 +287,12 @@ function goToWishlist() {
   router.push({ name: 'ListaDeseos' }).catch(() => router.push('/lista-deseos'))
 }
 
-// ✅ Función auxiliar para obtener el token desde cualquier almacenamiento
-const getToken = () => {
-  return localStorage.getItem('token') || sessionStorage.getItem('token')
-}
-
-// ✅ Función auxiliar para verificar si el token es válido (no expirado)
-const isTokenValid = () => {
-  const token = getToken()
-  if (!token) return false
-  
-  // Verificar expiración usando authHelper
-  try {
-    const parts = token.split('.')
-    if (parts.length !== 3) return false
-    
-    const payload = JSON.parse(atob(parts[1]))
-    const expirationTime = payload.exp * 1000 // exp está en segundos
-    return Date.now() < expirationTime
-  } catch (e) {
-    return false
-  }
-}
-
-// ✅ Función auxiliar para limpiar todos los tokens
-const clearAllTokens = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('token_exp')
-  sessionStorage.removeItem('token')
-  sessionStorage.removeItem('token_exp')
-}
-
 function goLoginMobile() {
+  // Verificar si el usuario está logueado con token válido
   const token = getToken()
   
   if (token) {
-    // Hay token, verificar si es válido
+    // Hay token, verificar si es válido (no expirado)
     const tokenValid = isTokenValid()
     
     if (tokenValid) {
