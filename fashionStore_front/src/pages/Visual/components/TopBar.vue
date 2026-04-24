@@ -225,14 +225,18 @@ function goHome() {
   router.push({ name: 'IndexPage' }).catch(() => router.push('/'))
 }
 function goLogin() {
-  // Verificar si el usuario está logueado
-   const token = getToken()
+  // Verificar si el usuario está logueado con token válido
+  const tokenValid = isTokenValid()
 
-  if (token) {
+  if (tokenValid) {
     // Usuario logueado, ir al perfil
     router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
   } else {
-    // Usuario no logueado, ir al login
+    // Token inválido o expirado, limpiar y ir a login
+    localStorage.removeItem('token')
+    localStorage.removeItem('token_exp')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('token_exp')
     router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
   }
 }
@@ -272,11 +276,35 @@ function goToWishlist() {
 const getToken = () => {
   return localStorage.getItem('token') || sessionStorage.getItem('token')
 }
+
+// ✅ Función auxiliar para verificar si el token es válido (no expirado)
+const isTokenValid = () => {
+  const token = getToken()
+  if (!token) return false
+  
+  // Verificar expiración usando authHelper
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) return false
+    
+    const payload = JSON.parse(atob(parts[1]))
+    const expirationTime = payload.exp * 1000 // exp está en segundos
+    return Date.now() < expirationTime
+  } catch (e) {
+    return false
+  }
+}
+
 function goLoginMobile() {
- const token = getToken()
-  if (token) {
+  const tokenValid = isTokenValid()
+  if (tokenValid) {
     router.push({ name: 'Perfil' }).catch(() => router.push('/perfil'))
   } else {
+    // Token inválido o expirado, limpiar y ir a login
+    localStorage.removeItem('token')
+    localStorage.removeItem('token_exp')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('token_exp')
     router.push({ name: 'LoginPage' }).catch(() => router.push('/login'))
   }
 }
