@@ -118,8 +118,19 @@ export default defineComponent({
         const token = localStorage.getItem('token') || sessionStorage.getItem('token')
         if (token) {
           const payload = JSON.parse(atob(token.split('.')[1]))
-          userRole.value = payload.Rol?.toLowerCase()
-          console.log("userRole.value: ",userRole.value)
+          // Normalizar el rol a formato Title Case para consistencia con essentialListUrl.js
+          const rawRole = payload.Rol || payload.rol
+          if (rawRole) {
+            const lower = rawRole.toLowerCase()
+            const roleMap = {
+              'administrador': 'Administrador',
+              'vendedor': 'Vendedor',
+              'cliente': 'Cliente',
+              'admin': 'Administrador'
+            }
+            userRole.value = roleMap[lower] || (rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase())
+          }
+          console.log("userRole.value: ", userRole.value)
         }
       } catch (err) {
         console.error('Error decodificando token:', err)

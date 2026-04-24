@@ -44,16 +44,38 @@ export function getUserInfo() {
 
     if (!decoded) return null;
 
+    // Normalizar el rol a formato Title Case para consistencia
+    const rawRole = decoded.Rol || decoded.rol || null;
+    const normalizedRole = rawRole ? normalizeRole(rawRole) : null;
+
     return {
         id: decoded.Id,
         nombreCompleto: decoded.NombreCompleto,
         username: decoded.unique_name,
         telefono: decoded.Telefono,
         correo: decoded.Correo,
-        rol: decoded.Rol || decoded.rol || null, // Busca el rol en diferentes formatos
+        rol: normalizedRole,
         roles: decoded.Roles || decoded.roles || [], // Para múltiples roles
         exp: decoded.exp
     };
+}
+
+/**
+ * Normaliza el rol a formato Title Case (ej: "administrador" -> "Administrador")
+ * @param {string} role - El rol a normalizar
+ * @returns {string} - El rol normalizado
+ */
+function normalizeRole(role) {
+    if (!role) return role;
+    const lower = role.toLowerCase();
+    // Mapeo de roles conocidos
+    const roleMap = {
+        'administrador': 'Administrador',
+        'vendedor': 'Vendedor',
+        'cliente': 'Cliente',
+        'admin': 'Admin'
+    };
+    return roleMap[lower] || role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 }
 
 /**
