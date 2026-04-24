@@ -1,6 +1,15 @@
 <template>
   <TopBar/>
   <div class="q-pa-lg bg-grey-1 producto-detalle">
+    <!-- Botón atrás en esquina superior derecha -->
+    <q-btn
+      icon="arrow_back"
+      flat
+      round
+      color="primary"
+      class="back-button"
+      @click="goBack"
+    />
     <div v-if="loading" class="flex flex-center q-pa-xl">
       <div>Cargando producto...</div>
     </div>
@@ -717,7 +726,19 @@ function getProductoImageRelacionados(prod) {
 
   return candidate || null
 }
+
+function goBack() {
+  router.back()
+}
 </script>
+<style scoped>
+.back-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+</style>
 
 <style scoped lang="scss">
 .producto-detalle {

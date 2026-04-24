@@ -1,6 +1,15 @@
 <template>
   <div>
     <TopBar :categories="categories" />
+    <!-- Botón atrás en esquina superior derecha -->
+    <q-btn
+      icon="arrow_back"
+      flat
+      round
+      color="primary"
+      class="back-button"
+      @click="goBack"
+    />
     <div class="q-pa-lg bg-grey-1">
       <div class="text-h6 text-weight-bold q-mb-md">
         Productos en {{ categoria?.nombre }}
@@ -589,7 +598,19 @@ function getProductoImagePreferVariant(prod) {
 
   return null;
 }
+
+function goBack() {
+  router.back()
+}
 </script>
+<style scoped>
+.back-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+</style>
 <style scoped lang="scss">
 /* Media Queries para responsividad */
 @media (max-width: 599px) {
