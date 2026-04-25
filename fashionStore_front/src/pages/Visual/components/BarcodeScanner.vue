@@ -28,7 +28,8 @@ let bufferCodigo = ''
 
     if (!validation.allowed) {
       // ❌ BLOQUEAR: Stock insuficiente
-     StockError(producto.descripcion || producto.nombre, validation)
+     //StockError(producto.descripcion || producto.nombre, validation)
+     StockError(producto.codigo || producto.nombre, validation)
   return
     }
 
@@ -40,7 +41,8 @@ let bufferCodigo = ''
     } else {
       cart.addItem({
         id: producto.id,
-        nombre: producto.descripcion || producto.nombre,
+        ///nombre: producto.descripcion || producto.nombre,
+        nombre: producto.codigo || producto.nombre,
         cantidad: 1,
         precioVenta: producto.precioVenta,
         precioVentaDescuento: producto.precioVentaDescuento,
@@ -51,6 +53,10 @@ let bufferCodigo = ''
               producto.fotos?.[0]?.url ||
               null
       })
+
+      console.log("cart",cart)
+      console.log("producto",producto)
+
     }
 
     // ✅ Feedback discreto (opcional: comentar si es muy frecuente el escaneo)
@@ -103,7 +109,7 @@ function getMaxStock(producto) {
 
   if (prod) {
     // Stock directo en producto
-  
+
     // Stock desde variantes (productoVariantes)
     if (Array.isArray(prod.productoVariantes) && prod.productoVariantes.length > 0) {
       // Si hay variante principal, usar esa

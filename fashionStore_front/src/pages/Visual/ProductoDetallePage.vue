@@ -1,15 +1,22 @@
 <template>
   <TopBar/>
+<div class="q-xs-12 row">
+  <q-btn
+    icon="arrow_back"
+    label="Ir Atrás"
+    round
+    color="primary"
+    class="q-ml-auto q-ma-md col-xs-6 col-sm-3 col-md-1"
+    style="
+                border: 1px solid #c7b5ff;
+                border-radius: 15px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+              "
+    @click="goBack"
+  />
+</div>
   <div class="q-pa-lg bg-grey-1 producto-detalle">
-    <!-- Botón atrás en esquina superior derecha -->
-    <q-btn
-      icon="arrow_back"
-      flat
-      round
-      color="primary"
-      class="back-button"
-      @click="goBack"
-    />
+
     <div v-if="loading" class="flex flex-center q-pa-xl">
       <div>Cargando producto...</div>
     </div>
@@ -19,6 +26,7 @@
     </div>
 
     <div v-else class="row q-col-gutter-md">
+
       <!-- Imagen principal -->
         <div class="col-12 col-md-6">
         <q-carousel
@@ -55,6 +63,8 @@
 
       <!-- Información del producto -->
       <div class="col-12 col-md-6 q-mt-md ">
+         <!-- Botón atrás en esquina superior derecha -->
+
         <div class="product-header row items-center q-gutter-sm">
           <div class="col">
             <div class="text-h5 text-weight-bold">{{ displayedCodigo()  }}</div>
@@ -62,6 +72,7 @@
             <div class="text-caption text-grey-7">SKU: {{ displayedSKU() }}</div>
           </div>
           <div class="col-auto">
+
             <q-btn
               dense
               round
@@ -122,7 +133,7 @@
 </div>
 
 
-        <div class="q-mb-lg product-desc  description-text">{{ producto.descripcion || 'Sin descripción' }}</div>
+        <div class="q-mb-lg product-desc"  style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;">{{ producto.descripcion || 'Sin descripción' }}</div>
 
         <div class="row items-center q-gutter-sm actions-row">
           <q-input
@@ -731,14 +742,7 @@ function goBack() {
   router.back()
 }
 </script>
-<style scoped>
-.back-button {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1000;
-}
-</style>
+
 
 <style scoped lang="scss">
 .producto-detalle {

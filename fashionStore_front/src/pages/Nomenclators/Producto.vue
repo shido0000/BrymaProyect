@@ -565,7 +565,7 @@ class="col-xs-12 col-sm-12 col-md-2 q-px-sm"
             </template>
               <template v-slot:body-cell-descripcion="props">
                             <q-td :props="props">
-                                <div>
+                                <div style="white-space: pre-wrap;">
                                     {{
                                         PonerPuntosSupensivosACampo(
                                             props.row?.descripcion,

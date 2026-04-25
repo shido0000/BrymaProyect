@@ -45,7 +45,7 @@
 
               <!-- Info producto -->
               <div class="col q-ml-md">
-                <div class="text-subtitle1 q-ml-md text-weight-bold">{{ it.nombre }}</div>
+                <div class="text-subtitle1 text-black q-ml-md text-weight-bold">{{getNombreProducto(it)}}</div>
                <!-- Precio unitario -->
  <!-- Precio unitario -->
 <!-- Precio unitario -->
@@ -379,6 +379,23 @@ function onQtyChange(item) {
     item.cantidad = 1
   }
   cart.updateQuantity(item.id, item.cantidad)
+}
+
+function getNombreProducto(item) {
+  // Prioridad: nombre directo, luego codigo, luego descripcion, luego buscar en raw
+  if (item.nombre) return item.nombre
+  if (item.codigo) return item.codigo
+  if (item.descripcion) return item.descripcion
+
+  // Buscar en raw (estructura del producto completo)
+  const raw = item.raw?.raw || item.raw
+  if (raw) {
+    if (raw.codigo) return raw.codigo
+    if (raw.descripcion) return raw.descripcion
+    if (raw.nombre) return raw.nombre
+  }
+
+  return 'Producto sin nombre'
 }
 </script>
 

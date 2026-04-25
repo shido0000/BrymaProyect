@@ -2,14 +2,7 @@
   <div>
     <TopBar :categories="categories" />
     <!-- Botón atrás en esquina superior derecha -->
-    <q-btn
-      icon="arrow_back"
-      flat
-      round
-      color="primary"
-      class="back-button"
-      @click="goBack"
-    />
+
     <div class="q-pa-lg bg-grey-1">
       <div class="text-h6 text-weight-bold q-mb-md">
         Productos en {{ categoria?.nombre }}
@@ -29,7 +22,7 @@
           class="col-12 col-sm-6 col-md-3"
         >
           <q-card
-            class="q-pa-md shadow-2 cursor-pointer"
+            class=" shadow-2 cursor-pointer col-12"
             @click="goToProduct(producto.id)"
           >
             <!-- Carrusel de fotos -->
@@ -43,21 +36,18 @@
               <q-carousel
                 v-model="producto.slide"
                 animated
-                arrows
-                navigation
                 infinite
-                height="180px"
-                class="rounded-borders"
+                class="q-pa-none"
               >
                 <q-carousel-slide
                   v-for="(foto, idx) in producto.productosVariantes"
                   :key="idx"
                   :name="idx"
-                  class="flex flex-center bg-grey-2"
+                  class=" bg-grey-2 q-pa-none"
                 >
                   <q-img
                     :src="getFotoUrlFromFoto(foto, producto)"
-                    style="height: 100%; width: 100%; object-fit: cover"
+                    style="height: 100%;  object-fit: cover"
                   >
                     <template v-slot:error>
                       <div class="text-center text-grey-6 q-pa-md">
@@ -73,19 +63,19 @@
             <q-img
               v-else
               src="/img/sin-foto.jpg"
-              style="height: 180px; object-fit: cover; border-radius: 8px"
+              style=" object-fit: cover; border-radius: 8px"
               class="q-mb-md"
             />
 
             <!-- Código -->
-            <q-card-section class="text-center text-primary text-weight-bold">
+            <q-card-section class="text-center text-primary text-weight-bold q-pt-xs">
               {{ producto.codigo }}
             </q-card-section>
 
-            <!-- Descripción -->
+            <!-- Descripción
             <q-card-section class="text-center text-grey-8 description-text">
               {{ producto.descripcion || "Sin descripción" }}
-            </q-card-section>
+            </q-card-section>-->
             <!--<q-card-section class="text-center text-grey-8">
         {{
           producto.descripcion && producto.descripcion.length > 40
@@ -95,7 +85,7 @@
       </q-card-section>-->
 
             <!-- Precio -->
-            <q-card-section class="text-center text-grey-6">
+            <q-card-section class="text-center text-grey-6 q-mt-none q-pt-none q-pb-xs">
               $
               {{
                 producto.precioVenta != null
@@ -107,7 +97,7 @@
               }}
             </q-card-section>
 
-            <q-card-actions align="right">
+            <q-card-actions align="right" class="q-pt-none">
               <q-btn
                 dense
                 round
